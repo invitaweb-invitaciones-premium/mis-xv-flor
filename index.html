@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flor · Mis XV</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=IM+Fell+English:ital@0;1&family=Raleway:wght@300;400;500&family=Dancing+Script:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+:root{
+  --rose-old:#b5737a;
+  --rose-deep:#8b4a52;
+  --gold:#c9a96e;
+  --gold-light:#e8d5a3;
+  --beige:#f5ece0;
+  --beige2:#ede0cc;
+  --cream:#fdf8f2;
+  --text:#3a2a1e;
+  --text2:#6b4e3d;
+  --fucsia-lila:#96505a;
+  --bordo:#5c1a1f; --bordo-light:#7a2b2b;
+  --white:#ffffff;
+  --cobre:#b9774f; --cobre-light:#d9a07a; --cobre-dark:#7d4328;
+  --salvia-dark:#4b5c3f;
+}
+body{
+  background-color:#7d8e68;
+  background-image:url('bg-natali.png');
+  background-size:cover;
+  background-position:center;
+  font-family:'Cormorant Garamond',serif;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;min-height:100dvh;
+  position:relative;overflow:hidden;
+  padding:16px;
+}
+
+/* PÉTALOS / CONFETTI dorado */
+#petals{position:fixed;inset:0;pointer-events:none;z-index:1;}
+.petal{position:absolute;top:-20px;animation:petalFall linear infinite;opacity:0;box-shadow:0 0 5px 1px rgba(255,255,255,.6);}
+@keyframes petalFall{
+  0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:.55;}
+  50%{transform:translateY(50vh) rotate(220deg) translateX(14px);opacity:.38;}
+  100%{transform:translateY(108vh) rotate(400deg) translateX(-10px);opacity:0;}
+}
+
+/* ORNAMENTOS decorativos fijos */
+.corner{position:fixed;font-size:clamp(28px,6vw,42px);color:var(--gold-light);opacity:.4;z-index:2;line-height:1;}
+.corner-tl{top:14px;left:16px;}
+.corner-tr{top:14px;right:16px;transform:scaleX(-1);}
+.corner-bl{bottom:14px;left:16px;transform:scaleY(-1);}
+.corner-br{bottom:14px;right:16px;transform:scale(-1);}
+
+/* HEADER */
+.header-area{
+  text-align:center;margin-bottom:18px;
+  opacity:0;animation:fadeUp 1s .2s forwards;
+  position:relative;z-index:10;
+}
+.header-date{
+  font-family:'Raleway',sans-serif;
+  font-size:clamp(9px,2.5vw,12px);
+  letter-spacing:7px;color:var(--white);
+  text-transform:uppercase;margin-bottom:5px;text-shadow:0 1px 10px rgba(30,45,25,.45);
+}
+.header-name{
+  font-family:'Pinyon Script',cursive;
+  font-size:clamp(72px,21vw,120px);
+  font-weight:400;
+  color:var(--white);line-height:1.05;
+  text-shadow:0 2px 20px rgba(30,45,25,.5);
+}
+.header-subtitle{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(14px,3.8vw,20px);
+  color:var(--white);letter-spacing:5px;margin-top:3px;
+  font-style:italic;text-shadow:0 1px 10px rgba(30,45,25,.45);
+}
+.header-divider{
+  width:120px;height:1px;margin:8px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+/* ESCENA */
+.scene{
+  position:relative;
+  width:min(88vw,460px);
+  opacity:0;animation:fadeUp 1s .6s forwards;
+  cursor:pointer;z-index:10;
+}
+
+/* HOJA */
+.letter{
+  position:absolute;
+  left:13%;width:74%;
+  top:26%;
+  z-index:5;opacity:0;pointer-events:none;
+  background:linear-gradient(175deg,#667a56 0%,var(--salvia-dark) 100%);
+  border-radius:3px 3px 2px 2px;
+  border:1px solid rgba(232,213,163,.55);
+  box-shadow:0 -4px 28px rgba(139,74,82,.12),0 2px 12px rgba(0,0,0,.06);
+  min-height:56%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:7px;padding:22px 14px 24px;
+  text-align:center;overflow:visible;
+}
+.letter::before{
+  content:'';position:absolute;top:13px;left:13px;right:13px;
+  height:1px;background:linear-gradient(90deg,transparent,rgba(232,213,163,.6),transparent);
+}
+.letter::after{
+  content:'';position:absolute;bottom:13px;left:13px;right:13px;
+  height:1px;background:linear-gradient(90deg,transparent,rgba(232,213,163,.6),transparent);
+}
+/* esquinas decorativas en la hoja */
+.letter-corner{position:absolute;font-size:14px;color:var(--gold-light);opacity:.8;line-height:1;}
+.letter-corner.tl{top:6px;left:8px;}
+.letter-corner.tr{top:6px;right:8px;}
+.letter-corner.bl{bottom:6px;left:8px;}
+.letter-corner.br{bottom:6px;right:8px;}
+
+.letter-crown{font-size:clamp(18px,4vw,24px);opacity:.7;}
+.letter-xv{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,10vw,58px);
+  font-weight:600;
+  color:var(--white);
+  line-height:1;
+  text-shadow:0 2px 14px rgba(0,0,0,.25);
+}
+.letter-name{
+  font-family:'Pinyon Script',cursive;
+  font-size:clamp(28px,7.5vw,42px);
+  color:var(--white);line-height:1;
+}
+.letter-msg{
+  font-family:'IM Fell English',serif;
+  font-size:clamp(12px,3vw,15px);
+  color:var(--white);letter-spacing:1px;
+  font-style:italic;line-height:1.6;
+  max-width:90%;
+}
+.letter-date{
+  font-family:'Raleway',sans-serif;
+  font-size:clamp(9px,2.3vw,11px);
+  letter-spacing:4px;color:var(--white);
+  text-transform:uppercase;margin-top:3px;
+}
+
+/* SVG SOBRE */
+.envelope-wrap{position:relative;z-index:20;width:100%;}
+.envelope-svg{width:100%;display:block;filter:drop-shadow(0 16px 30px rgba(25,40,20,.35));}
+.flap{transform-box:fill-box;transform-origin:50% 0%;}
+
+/* SELLO */
+.seal-wrap{
+  position:absolute;left:50%;bottom:30%;
+  transform:translateX(-50%);z-index:25;
+}
+.seal-circle{
+  width:clamp(70px,17vw,86px);height:clamp(70px,17vw,86px);
+  border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,var(--cobre-light),var(--cobre) 55%,var(--cobre-dark));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(60,30,15,.45),inset 0 1px 3px rgba(255,255,255,.4);
+  position:relative;
+}
+.seal-icon{font-size:clamp(20px,5vw,26px);position:relative;z-index:2;}
+
+/* ANIMACIONES */
+@keyframes flapOpen{0%{transform:rotateX(0);}100%{transform:rotateX(-175deg);}}
+@keyframes sealPop{
+  0%{transform:translateX(-50%) scale(1);opacity:1;}
+  35%{transform:translateX(-50%) scale(1.18);opacity:.7;}
+  100%{transform:translateX(-50%) scale(0);opacity:0;}
+}
+@keyframes letterRise{
+  0%{transform:translateY(0) scale(.97);opacity:0;}
+  20%{opacity:1;}
+  100%{transform:translateY(-52%) scale(1);opacity:1;}
+}
+@keyframes envelopeExit{to{transform:scale(.88) translateY(16px);opacity:0;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+.opening .flap     {animation:flapOpen   1.1s .1s  cubic-bezier(.4,0,.2,1) forwards;}
+.opening .seal-wrap{animation:sealPop    .55s .05s ease-in forwards;}
+.opening .letter   {animation:letterRise 1.4s .9s  cubic-bezier(.2,.8,.3,1) forwards;}
+.done              {animation:envelopeExit .55s .1s ease-in forwards;}
+
+.scene:not(.opening) .seal-wrap{transition:transform .2s;}
+.scene:hover:not(.opening) .seal-wrap{transform:translateX(-50%) scale(1.08);}
+
+/* HINT */
+.tap-hint{
+  margin-top:14px;text-align:center;
+  font-family:'Raleway',sans-serif;font-size:clamp(9px,2.5vw,11px);
+  letter-spacing:4px;color:rgba(255,255,255,.8);text-transform:uppercase;text-shadow:0 1px 8px rgba(30,45,25,.5);
+  opacity:0;animation:fadeUp .9s 1.2s forwards;
+  position:relative;z-index:10;transition:opacity .3s;
+}
+.footer-text{
+  margin-top:14px;text-align:center;
+  font-family:'IM Fell English',serif;
+  font-size:clamp(15px,3.8vw,20px);
+  font-style:italic;color:var(--white);text-shadow:0 1px 10px rgba(30,45,25,.5);
+  opacity:0;animation:fadeUp .9s .9s forwards;
+  position:relative;z-index:10;
+}
+#overlay{
+  position:fixed;inset:0;
+  background:linear-gradient(160deg,#f5ece0,#fdf8f2);
+  opacity:0;pointer-events:none;z-index:100;transition:opacity .65s ease;
+}
+#overlay.fade-in{opacity:1;pointer-events:all;}
+</style>
+</head>
+<body>
+<div id="petals"></div>
+
+<div id="overlay"></div>
+
+<!-- Esquinas decorativas estilo Luis XV -->
+<div class="corner corner-tl">❧</div>
+<div class="corner corner-tr">❧</div>
+<div class="corner corner-bl">❧</div>
+<div class="corner corner-br">❧</div>
+
+<div class="header-area">
+  <p class="header-date">09 · 01 · 2027</p>
+  <h1 class="header-name">Flor</h1>
+  <p class="header-subtitle" style="opacity:0;animation:fadeUp .9s .5s forwards;">Mis XV</p>
+  <div class="header-divider"></div>
+</div>
+
+<div class="scene" id="scene" onclick="openEnvelope()">
+
+  <!-- HOJA -->
+  <div class="letter" id="letter">
+    <span class="letter-corner tl">✦</span>
+    <span class="letter-corner tr">✦</span>
+    <span class="letter-corner bl">✦</span>
+    <span class="letter-corner br">✦</span>
+    <span class="letter-crown">👑</span>
+    <span class="letter-xv">XV</span>
+    <span class="letter-name">Flor</span>
+    <span class="letter-msg">Te invito a compartir<br/>la noche más especial<br/>de mi vida</span>
+    <span class="letter-date">Sábado 9 de Enero · 2027</span>
+  </div>
+
+  <!-- SELLO -->
+  <div class="seal-wrap" id="seal-wrap">
+    <div class="seal-circle">
+      <svg viewBox="0 0 86 86" style="position:absolute;inset:0;width:100%;height:100%;">
+        <defs>
+          <path id="cp" d="M43,43 m-31,0 a31,31 0 1,1 62,0 a31,31 0 1,1 -62,0"/>
+        </defs>
+        <text font-family="Raleway,sans-serif" font-size="6" fill="rgba(253,248,242,0.85)" letter-spacing="1.2">
+          <textPath href="#cp" startOffset="2%">Tocá aquí · para ver la invitación ·</textPath>
+        </text>
+      </svg>
+      <span class="seal-icon">🦋</span>
+    </div>
+  </div>
+
+  <!-- SVG SOBRE -->
+  <div class="envelope-wrap" id="envelope-wrap">
+    <svg class="envelope-svg" viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="envG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c4cfb1"/>
+          <stop offset="100%" stop-color="#a2af8a"/>
+        </linearGradient>
+        <linearGradient id="flapG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b5c19f"/>
+          <stop offset="100%" stop-color="#95a37e"/>
+        </linearGradient>
+        <filter id="sh">
+          <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="rgba(25,40,20,0.3)"/>
+        </filter>
+        <!-- textura de papel / yeso -->
+        <filter id="grain" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="7" result="n"/>
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 .22  0 0 0 0 .3  0 0 0 0 .16  0 0 0 .9 -.38" result="t"/>
+          <feComposite in="t" in2="SourceAlpha" operator="in"/>
+        </filter>
+        <!-- mariposa -->
+        <g id="bf">
+          <path d="M0,0 C-6,-16 -22,-20 -26,-10 C-28,-2 -16,6 0,2 Z" fill="#f4d3c6" stroke="#c98f77" stroke-width=".8"/>
+          <path d="M0,2 C-10,6 -18,14 -12,19 C-6,22 -1,12 0,2 Z" fill="#efc2b2" stroke="#c98f77" stroke-width=".8"/>
+          <path d="M0,0 C6,-16 22,-20 26,-10 C28,-2 16,6 0,2 Z" fill="#f4d3c6" stroke="#c98f77" stroke-width=".8"/>
+          <path d="M0,2 C10,6 18,14 12,19 C6,22 1,12 0,2 Z" fill="#efc2b2" stroke="#c98f77" stroke-width=".8"/>
+          <circle cx="-14" cy="-9" r="1.3" fill="#c98f77"/><circle cx="14" cy="-9" r="1.3" fill="#c98f77"/>
+          <path d="M0,-3 L0,14" stroke="#8a5a45" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M0,-3 C-3,-9 -6,-11 -8,-12 M0,-3 C3,-9 6,-11 8,-12" fill="none" stroke="#8a5a45" stroke-width=".7"/>
+        </g>
+      </defs>
+      <!-- Cuerpo -->
+      <rect x="14" y="80" width="472" height="288" rx="14" fill="url(#envG)" filter="url(#sh)"/>
+      <rect x="14" y="80" width="472" height="288" rx="14" fill="#fff" filter="url(#grain)" opacity=".55"/>
+      <!-- Triángulos doblez -->
+      <polygon points="14,80  250,230  14,368" fill="#7f8f69" opacity=".35"/>
+      <polygon points="486,80 250,230 486,368" fill="#7f8f69" opacity=".35"/>
+      <polygon points="14,368 250,248 486,368" fill="#6f7f5a" opacity=".42"/>
+      <!-- Líneas doblez -->
+      <line x1="14"  y1="80" x2="250" y2="230" stroke="rgba(60,80,45,.28)" stroke-width="1"/>
+      <line x1="486" y1="80" x2="250" y2="230" stroke="rgba(60,80,45,.28)" stroke-width="1"/>
+      <!-- Detalle dorado: filete en el borde -->
+      <rect x="20" y="86" width="460" height="276" rx="11" fill="none" stroke="rgba(232,213,163,.6)" stroke-width="1"/>
+      <!-- Ramas botánicas -->
+      <g>
+        <path d="M34,360 C48,325 62,285 96,236" fill="none" stroke="#b9774f" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="53.1" cy="339.7" rx="13.4" ry="5.4" transform="rotate(-18 53.1 339.7)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="38.9" cy="321.5" rx="12.7" ry="5.1" transform="rotate(-118 38.9 321.5)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="61.0" cy="317.7" rx="12.0" ry="4.8" transform="rotate(-17 61.0 317.7)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="49.8" cy="299.2" rx="11.3" ry="4.5" transform="rotate(-116 49.8 299.2)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="70.6" cy="294.5" rx="10.5" ry="4.2" transform="rotate(-14 70.6 294.5)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="63.1" cy="275.2" rx="9.8" ry="3.9" transform="rotate(-112 63.1 275.2)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="82.9" cy="269.5" rx="9.1" ry="3.6" transform="rotate(-10 82.9 269.5)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="79.4" cy="249.5" rx="8.3" ry="3.3" transform="rotate(-108 79.4 249.5)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="98.6" cy="242.5" rx="7.6" ry="3.0" transform="rotate(-6 98.6 242.5)" fill="#d3a070" opacity=".95"/>
+        <ellipse cx="96" cy="232" rx="3" ry="6" fill="#d3a070"/>
+      </g>
+      <g>
+        <path d="M466,360 C452,330 440,296 414,258" fill="none" stroke="#c58f86" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="464.7" cy="336.2" rx="11.2" ry="4.5" transform="rotate(-64 464.7 336.2)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="444.2" cy="330.6" rx="10.4" ry="4.2" transform="rotate(-164 444.2 330.6)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="452.5" cy="311.8" rx="9.6" ry="3.8" transform="rotate(-64 452.5 311.8)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="433.5" cy="304.7" rx="8.8" ry="3.5" transform="rotate(-166 433.5 304.7)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="438.0" cy="285.5" rx="8.0" ry="3.2" transform="rotate(-68 438.0 285.5)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="419.9" cy="277.3" rx="7.2" ry="2.9" transform="rotate(-171 419.9 277.3)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="419.6" cy="257.6" rx="6.4" ry="2.5" transform="rotate(-73 419.6 257.6)" fill="#e3b4ad" opacity=".95"/>
+        <ellipse cx="414" cy="254" rx="3" ry="6" fill="#e3b4ad"/>
+      </g>
+      <use href="#bf" transform="translate(402,318) rotate(14) scale(.9)"/>
+      <!-- FLAP -->
+      <g class="flap" style="transform-origin:250px 80px;">
+        <polygon points="14,82 250,220 486,82" fill="url(#flapG)"/>
+        <polygon points="14,82 250,220 486,82" fill="#fff" filter="url(#grain)" opacity=".55"/>
+        <polyline points="14,82 250,220 486,82" fill="none" stroke="rgba(232,213,163,.55)" stroke-width="1"/>
+        <line x1="14" y1="82" x2="486" y2="82" stroke="rgba(60,80,45,.2)" stroke-width="1"/>
+        <line x1="22" y1="89" x2="478" y2="89" stroke="rgba(232,213,163,.45)" stroke-width=".8"/>
+        <use href="#bf" transform="translate(118,118) rotate(-22) scale(.65)"/>
+      </g>
+      <!-- Borde exterior -->
+      <rect x="14" y="80" width="472" height="288" rx="14" fill="none" stroke="rgba(60,80,45,.3)" stroke-width="1.5"/>
+      <!-- "Mis XV" manuscrita -->
+      <text x="250" y="312" text-anchor="middle"
+        font-family="'Dancing Script',cursive" font-size="34"
+        fill="rgba(255,255,255,.85)" transform="rotate(-2,250,312)">Mis XV</text>
+    </svg>
+  </div>
+
+</div>
+
+<p class="tap-hint" id="tap-hint">tocá el sobre para abrirlo ✦</p>
+<p class="footer-text">¡Guardamos un lugar para vos!</p>
+
+<script>
+(function(){
+  const c=document.getElementById('petals');
+  /* pétalos: tono rosa viejo + dorado + beige */
+  const formas=[
+    {w:7,h:10,br:'50% 40% 55% 35%'},  /* pétalos */
+    {w:5,h:5,br:'50%'},                /* círculos */
+    {w:6,h:2,br:'2px'},               /* confetti rectángulo */
+  ];
+  const cols=['#e8c766','#f5deb3','#fff8dc','#d4af37','#ffffff','#c0c0c0','#f0e68c'];
+  for(let i=0;i<32;i++){
+    const p=document.createElement('div');p.className='petal';
+    const f=formas[Math.floor(Math.random()*formas.length)];
+    const s=.7+Math.random()*.8;
+    p.style.cssText=[
+      'left:'+(Math.random()*100)+'vw',
+      'width:'+(f.w*s)+'px','height:'+(f.h*s)+'px',
+      'background:'+cols[Math.floor(Math.random()*cols.length)],
+      'border-radius:'+f.br,
+      'animation-duration:'+(6+Math.random()*8)+'s',
+      'animation-delay:'+(-Math.random()*9)+'s',
+    ].join(';');
+    c.appendChild(p);
+  }
+})();
+
+let opened=false;
+function openEnvelope(){
+  if(opened)return;
+  opened=true;
+  document.getElementById('tap-hint').style.opacity='0';
+  const scene=document.getElementById('scene');
+  const letter=document.getElementById('letter');
+  const envWrap=document.getElementById('envelope-wrap');
+  scene.classList.add('opening');
+  setTimeout(()=>{letter.style.zIndex='35';envWrap.style.zIndex='15';},900);
+  setTimeout(()=>{
+    scene.classList.add('done');
+    document.getElementById('overlay').classList.add('fade-in');
+    setTimeout(()=>{window.location.href='invitacion.html';},750);
+  },3500);
+}
+</script>
+</body>
+</html>
