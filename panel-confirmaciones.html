@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="robots" content="noindex,nofollow"/>
 <title>Panel · Confirmaciones y Playlist</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;700&family=Pinyon+Script&display=swap" rel="stylesheet"/>
 <style>
@@ -15,7 +16,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{
-  background:'bg-natali.png';
+  background:linear-gradient(160deg,#f2e0d4,#f8ede0);
   min-height:100vh;
   font-family:'Cormorant Garamond',serif;color:var(--text);
   padding:40px 16px 60px;
@@ -145,18 +146,40 @@ function showTab(n){
   document.getElementById('wrap2').classList.toggle('active', n===2);
 }
 
-function cargar(n){
+/* Clave de lectura: solo se pide si el Apps Script responde "no autorizado".
+   No queda escrita en el código; se guarda en la pestaña mientras esté abierta. */
+function pedirClave(claveFallida){
+  /* si la otra pestaña ya consiguió una clave distinta a la que falló, se reutiliza (no se pregunta dos veces) */
+  const guardada=sessionStorage.getItem('xv_clave')||'';
+  if(guardada && guardada!==claveFallida) return guardada;
+  const c=prompt('Clave del panel:')||'';
+  sessionStorage.setItem('xv_clave',c);
+  return c;
+}
+async function pedir(url,clave){
+  const r=await fetch(url+'?t='+Date.now()+(clave?'&key='+encodeURIComponent(clave):''));
+  return r.json();
+}
+
+async function cargar(n){
   const st=estado[n];
-  fetch(st.url + "?t=" + Date.now())
-    .then(r=>r.json())
-    .then(data=>{
-      st.datos = Array.isArray(data) ? data.reverse() : [];
-      st.pagina = 0;
-      render(n);
-    })
-    .catch(()=>{
-      document.getElementById('muro'+n).innerHTML = '<p class="no-data">No se pudo cargar la información. Verificá la URL del Apps Script.</p>';
-    });
+  try{
+    const usada=sessionStorage.getItem('xv_clave')||'';
+    let data=await pedir(st.url,usada);
+    if(data&&!Array.isArray(data)&&data.status==='no autorizado'){
+      data=await pedir(st.url,pedirClave(usada));
+    }
+    if(data&&!Array.isArray(data)&&data.status==='no autorizado'){
+      sessionStorage.removeItem('xv_clave');
+      document.getElementById('muro'+n).innerHTML='<p class="no-data">Clave incorrecta. Tocá “Actualizar” para reintentar.</p>';
+      return;
+    }
+    st.datos = Array.isArray(data) ? data.reverse() : [];
+    st.pagina = 0;
+    render(n);
+  }catch(e){
+    document.getElementById('muro'+n).innerHTML = '<p class="no-data">No se pudo cargar la información. Verificá la URL del Apps Script.</p>';
+  }
 }
 
 function render(n){
@@ -168,10 +191,10 @@ function render(n){
 
   total.innerHTML = n===1
     ? `<strong>${st.datos.length}</strong> persona${st.datos.length===1?'':'s'} confirmada${st.datos.length===1?'':'s'}`
-    : `<strong>${st.datos.length}</strong> canción${st.datos.length===1?'':'es'} sugerida${st.datos.length===1?'':'s'}`;
+    : `<strong>${st.datos.length}</strong> canci${st.datos.length===1?'ón':'ones'} sugerida${st.datos.length===1?'':'s'}`;
 
   if(st.datos.length===0){
-    muro.innerHTML='<p class="no-data">Todavía no hay confirmaciones 🌹</p>';
+    muro.innerHTML='<p class="no-data">'+(n===1?'Todavía no hay confirmaciones 🌹':'Todavía no hay canciones 🎵')+'</p>';
     info.innerText='';
     document.getElementById('prevBtn'+n).style.display='none';
     document.getElementById('nextBtn'+n).style.display='none';
@@ -187,10 +210,15 @@ function render(n){
     const div=document.createElement('div');
     div.className='mensaje';
     div.style.animationDelay=`${i*0.06}s`;
-    div.innerHTML=`
-      <div class="linea"><span class="label">${st.tipoLabel}</span><span class="nombre">${m.nombre || "Anónimo"}</span></div>
-      <div class="linea"><span class="label">${st.tipoLabel2}</span><span>${m.mensaje || "-"}</span></div>
-    `;
+    /* textContent: lo que escriben los invitados nunca se interpreta como HTML */
+    const fila=(etiqueta,valor,clase)=>{
+      const l=document.createElement('div'); l.className='linea';
+      const e=document.createElement('span'); e.className='label'; e.textContent=etiqueta;
+      const v=document.createElement('span'); if(clase) v.className=clase; v.textContent=valor;
+      l.appendChild(e); l.appendChild(v); return l;
+    };
+    div.appendChild(fila(st.tipoLabel,String(m.nombre||'Anónimo'),'nombre'));
+    div.appendChild(fila(st.tipoLabel2,String(m.mensaje||'-')));
     muro.appendChild(div);
   });
 
