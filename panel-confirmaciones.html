@@ -16,7 +16,12 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{
-  background:linear-gradient(160deg,#f2e0d4,#f8ede0);
+  /* mismo fondo que la invitación */
+  background-color:#f2e0d4;
+  background-image:url('bg-natali.png');
+  background-size:100% auto;
+  background-repeat:repeat-y;
+  background-attachment:scroll;
   min-height:100vh;
   font-family:'Cormorant Garamond',serif;color:var(--text);
   padding:40px 16px 60px;
@@ -83,6 +88,20 @@ body{
   letter-spacing:1px;cursor:pointer;box-shadow:0 6px 20px rgba(169,120,36,.28);transition:transform .2s;
 }
 .refresh-btn:hover{transform:translateY(-2px);}
+
+/* Texto sobre la imagen en blanco (igual que la invitación); las tarjetas siguen claras con texto oscuro */
+.panel-title,.total-count,.total-count strong,.pagina-indicador,.no-data{color:#fff;text-shadow:0 1px 3px rgba(30,35,20,.6),0 2px 14px rgba(30,35,20,.55);}
+.panel-badge{color:#fff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.5);text-shadow:0 1px 3px rgba(30,35,20,.5);}
+.gold-line{background:linear-gradient(90deg,transparent,#fff,transparent);}
+.tab-btn:not(.active){background:rgba(255,255,255,.92);color:#4f5240;border-color:rgba(255,255,255,.9);}
+.tab-btn.active{background:linear-gradient(135deg,#666956 0%,#4a4c3c 100%);color:#fff;box-shadow:0 6px 20px rgba(40,45,30,.35);}
+.mensaje{background:rgba(255,255,255,.93);border-color:rgba(255,255,255,.7);box-shadow:0 4px 18px rgba(40,45,30,.22);}
+.mensaje::before{color:#666956;}
+.label{color:#666956;}
+.nombre{color:#3b3d30;}
+.linea{color:#4f5240;}
+.controles button{background:rgba(255,255,255,.92);color:#4f5240;border-color:rgba(255,255,255,.9);}
+.refresh-btn{background:linear-gradient(135deg,#666956 0%,#4a4c3c 100%);color:#fff;box-shadow:0 6px 20px rgba(40,45,30,.35);}
 
 @media(max-width:480px){
   .panel-title{font-size:48px;}
