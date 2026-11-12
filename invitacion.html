@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Mis XV – Flor</title>
 <meta content="Mis XV – Flor 🌹" property="og:title"/>
-<meta content="¡Estás invitado/a a mis XV años! Sábado 19 de Septiembre · 21:00 hs" property="og:description"/>
+<meta content="¡Estás invitado/a a mis XV años! Sábado 9 de Enero · 21:00 hs" property="og:description"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IM+Fell+English:ital@0;1&family=Raleway:wght@300;400;500&family=Dancing+Script:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet"/>
 <link href="styles.css" rel="stylesheet"/>
 <style>
@@ -106,8 +106,7 @@
   <div class="map-embed-wrap">
 <iframe src="https://www.google.com/maps?q=Haras+del+Sacramento&output=embed" width="100%" height="260" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
-<a class="btn-add-more" style="display:inline-block;margin-top:14px;text-decoration:none;" href="https://www.google.com/maps/search/?api=1&query=Haras+del+Sacramento" target="_blank">📍 Abrir en Google Maps</a>
-</div>
+<a class="btn-add-more" style="display:inline-block;margin-top:14px;text-decoration:none;" href="https://www.google.com/maps/search/?api=1&query=Haras+del+Sacramento" target="_blank" rel="noopener">📍 Abrir en Google Maps</a>
 </section>
 
 <!-- ═══ RSVP ═══ -->
@@ -275,10 +274,10 @@
 <span class="closing-corner bl">❧</span>
 <span class="closing-corner br">❧</span>
 <div class="closing-photo">
-<img alt="Flor" src="img/natali-final.png">
+<img alt="Flor" src="img/natali-final.png"/>
+</div>
 </div>
 <p class="closing-caption">Flor ✦ Mis XV Años</p>
-</div>
 </section>
 
 <!-- ═══ FOOTER ═══ -->
@@ -360,7 +359,7 @@ function toggleMusic(){
   }
 }
 
-/* COUNTDOWN — 19 de Septiembre 2026 a las 21hs */
+/* COUNTDOWN — 9 de Enero 2027 a las 21hs */
 (function(){
   const target=new Date('2027-01-09T21:00:00');
   const grid=document.getElementById('countdownGrid');
@@ -412,13 +411,24 @@ function handleSlideImgError(img,n){
 })();
 
 /* UTIL FETCH SHEETS */
+/* Envía un registro al Apps Script. Devuelve false solo si el servidor respondió que NO lo guardó
+   (ej: token inválido). Si la respuesta no se puede leer (red/CORS) se asume enviado, como antes. */
+async function enviar(url,data){
+  try{
+    const res=await fetch(url,{method:'POST',body:JSON.stringify(data)});
+    const j=await res.json().catch(()=>null);
+    if(j&&j.status&&j.status!=='ok'&&j.status!=='duplicado') return false;
+  }catch(e){console.warn('Sheet error',e);}
+  return true;
+}
 async function sendToSheet(url,data,btnId,loadingId){
   const btn=document.getElementById(btnId);
   const loading=document.getElementById(loadingId);
   btn.disabled=true; loading.classList.add('show');
-  try{ await fetch(url,{method:'POST',body:JSON.stringify(data)}); }
-  catch(e){console.warn('Sheet error',e);}
+  const ok=await enviar(url,data);
   loading.classList.remove('show');
+  if(!ok) btn.disabled=false;
+  return ok;
 }
 
 /* RSVP */
@@ -459,6 +469,7 @@ async function submitRSVP(){
   progressBar.style.width='0%';
   const total=personas.length;
 
+  let fallo=false;
   for(let i=0;i<total;i++){
     const p=personas[i];
     const segStart=(i/total)*100;
@@ -471,14 +482,20 @@ async function submitRSVP(){
       progressBar.style.width=currentPct+'%';
     },80);
 
-    await fetch(RSVP_URL,{method:'POST',body:JSON.stringify({nombre:p.name,extra:p.dato,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN})}).catch(()=>{});
+    const ok=await enviar(RSVP_URL,{nombre:p.name,extra:p.dato,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN});
 
     clearInterval(ticker);
+    if(!ok){fallo=true;break;}
     currentPct=((i+1)/total)*100;
     progressBar.style.width=currentPct+'%';
   }
 
   loading.classList.remove('show');
+  if(fallo){
+    progressWrap.classList.remove('show'); btn.disabled=false;
+    alert('No pudimos guardar tu confirmación. Probá de nuevo en un momento.');
+    return;
+  }
   setTimeout(()=>{progressWrap.classList.remove('show');},450);
   document.getElementById('rsvp-wrap').style.display='none';
   const suc=document.getElementById('rsvp-success'); suc.style.display='block';
@@ -494,7 +511,8 @@ async function submitSong(){
   const artist=document.getElementById('song-artist').value.trim();
   const yt=document.getElementById('song-yt').value.trim();
   if(!name||!artist){alert('Por favor ingresá la canción y el artista.');return;}
-  await sendToSheet(SONG_URL,{nombre:name+' - '+artist,extra:yt,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN},'song-btn','song-loading');
+  const ok=await sendToSheet(SONG_URL,{nombre:name+' - '+artist,extra:yt,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN},'song-btn','song-loading');
+  if(!ok){alert('No pudimos guardar tu canción. Probá de nuevo en un momento.');return;}
   document.getElementById('cancion-wrap').style.display='none';
   document.getElementById('song-success').style.display='block';
   setTimeout(launchMusicNotes,100);
@@ -504,12 +522,12 @@ async function submitSong(){
 const localMessages=[];
 (async function loadMessages(){
   try{
-    const res=await fetch(WALL_URL);
+    const res=await fetch(WALL_URL+'?t='+Date.now());
     const data=await res.json();
     if(Array.isArray(data)){
       data.forEach(row=>{
         if(row.nombre&&row.mensaje)
-          localMessages.push({author:row.nombre,text:row.mensaje,time:new Date(row.timestamp||Date.now())});
+          localMessages.push({author:String(row.nombre),text:String(row.mensaje),time:new Date(row.fecha||Date.now())});
       });
       renderMessages();
     }
@@ -519,7 +537,8 @@ async function submitMessage(){
   const author=document.getElementById('msg-author').value.trim();
   const text=document.getElementById('msg-text').value.trim();
   if(!author||!text){alert('Por favor completá tu nombre y mensaje.');return;}
-  await sendToSheet(WALL_URL,{nombre:author,mensaje:text,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN},'msg-btn','msg-loading');
+  const ok=await sendToSheet(WALL_URL,{nombre:author,mensaje:text,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN},'msg-btn','msg-loading');
+  if(!ok){alert('No pudimos publicar tu mensaje. Probá de nuevo en un momento.');return;}
   localMessages.push({author,text,time:new Date()});
   document.getElementById('msg-author').value='';
   document.getElementById('msg-text').value='';
@@ -577,10 +596,13 @@ async function submitExtra(){
   const btn=document.getElementById('rsvp-extra-btn');
   const loading=document.getElementById('rsvp-extra-loading');
   btn.disabled=true; loading.classList.add('show');
+  let fallo=false;
   for(const p of personas){
-    await fetch(RSVP_URL,{method:'POST',body:JSON.stringify({nombre:p.name,extra:p.dato,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN})}).catch(()=>{});
+    const ok=await enviar(RSVP_URL,{nombre:p.name,extra:p.dato,timestamp:new Date().toLocaleString('es-UY'),token:TOKEN});
+    if(!ok){fallo=true;break;}
   }
   loading.classList.remove('show');
+  if(fallo){btn.disabled=false; alert('No pudimos guardar la confirmación. Probá de nuevo en un momento.'); return;}
   document.getElementById('rsvp-add-more').style.display='none';
   const nombres=personas.map(p=>p.name).join(', ');
   const msg=document.getElementById('rsvp-thanks-msg');
