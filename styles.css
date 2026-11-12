@@ -349,13 +349,13 @@ footer{position:relative;z-index:2;padding:60px 24px 40px;text-align:center;back
   object-fit:cover;object-position:center top;
 }
 .closing-caption{
-  margin-top:26px;text-align:center;
-  font-family:'Pinyon Script',cursive;font-size:clamp(30px,8vw,38px);
+  margin-top:26px;text-align:center;white-space:nowrap;
+  font-family:'Pinyon Script',cursive;font-size:clamp(26px,7vw,36px);
   color:#fff;
 }
 .closing-caption::before,.closing-caption::after{
-  content:'';display:inline-block;width:34px;height:1px;vertical-align:middle;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.85));margin:0 12px;
+  content:'';display:inline-block;width:22px;height:1px;vertical-align:middle;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.85));margin:0 8px;
 }
 .closing-caption::after{transform:scaleX(-1);}
 
